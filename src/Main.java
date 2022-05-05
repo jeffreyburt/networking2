@@ -1,39 +1,55 @@
 import javax.swing.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
-
-
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Main {
 
+    public static int port = 12345;
+    private static String host;
+
+    public static LinkedBlockingQueue<TestMessage> messagesToSend;
+    private static SendThread sendThread;
+
     private static File selectedFile;
     private static byte[] fileByteArray;
+    private static boolean is_client;
 
     public static void main(String[] args) throws IOException {
         displayEntryDialogue();
-        System.out.println(selectedFile + " selected");
-        selectedFile.setReadable(true);
-        fileByteArray = getFileByteArray(selectedFile);
 
-
-        fileSaveDialogue();
     }
 
     private static void displayEntryDialogue() throws IOException {
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-//
-//        System.out.println("Hello, Welcome to JTP (Jeffrey Transfer Protocol");
-//        System.out.println("Please enter the IP you would like to connect to, or leave the field blank to receive a connection");
-//        System.out.print("Enter IP here: ");
-//        String ip = reader.readLine();
-//        if(ip.isEmpty()){
-//            System.out.println("Blank input detected, awaiting connection...");
-//        } else {
-//            System.out.println("Attempting to connect to " + ip + " ...");
-//        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+        System.out.println("Hello, Welcome to JTP (Jeffrey Transfer Protocol");
+        System.out.println("Please enter the IP you would like to connect to, or leave the field blank to receive a connection");
+        System.out.print("Enter IP here: ");
+        host = reader.readLine();
+        if(host.isEmpty()){
+            System.out.println("Blank input detected, awaiting connection...");
+            is_client = false;
+        } else {
+            System.out.println("Attempting to connect to " + host + " ...");
+            is_client = true;
+            clientSetup();
+        }
+    }
+
+    private static void clientSetup() throws IOException {
+        messagesToSend = new LinkedBlockingQueue<>();
+        sendThread = new SendThread(host, messagesToSend);
+        sendThread.start();
+
         selectedFile = fileSelector();
+        System.out.println(selectedFile.getName() + " selected");
+        selectedFile.setReadable(true);
+        fileByteArray = getFileByteArray(selectedFile);
+
+        Message message = new Message(selectedFile.getName(), fileByteArray);
+        //messagesToSend.put(message);
     }
 
 
