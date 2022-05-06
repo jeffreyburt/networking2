@@ -1,7 +1,4 @@
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -18,7 +15,8 @@ public class ReceiveThread extends Thread{
             ServerSocket serverSocket = new ServerSocket(Main.port);
             socket = serverSocket.accept();
             System.out.println("Server connected!!");
-            ObjectInputStream inputStream = (ObjectInputStream) socket.getInputStream();
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(socket.getInputStream());
+            inputStream = new ObjectInputStream(bufferedInputStream);
         }catch (IOException ioe){
             System.out.println(ioe);
         }
@@ -26,7 +24,8 @@ public class ReceiveThread extends Thread{
 
     public void run(){
         System.out.println("Receive Thread Listening");
-        while (inputStream != null && !socket.isClosed()){
+        while (inputStream != null){
+            System.out.println("input stream looped");
             try {
                 TestMessage message = (TestMessage) inputStream.readObject();
                 System.out.println(message.message);

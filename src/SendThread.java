@@ -1,3 +1,4 @@
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -15,7 +16,8 @@ public class SendThread extends Thread{
         try {
             this.messagesToSend = messagesToSend;
             socket = new Socket(host, Main.port);
-            send_output_stream = (ObjectOutputStream) socket.getOutputStream();
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
+            send_output_stream = new ObjectOutputStream(bufferedOutputStream);
         }catch (IOException ioe){
             System.out.println(ioe);
         }
@@ -25,6 +27,7 @@ public class SendThread extends Thread{
         while (true){
             try {
                 TestMessage message = messagesToSend.take();
+                System.out.println("Sending test message with text " + message.message);
                 send_output_stream.writeObject(message);
                 send_output_stream.flush();
                 send_output_stream.reset();

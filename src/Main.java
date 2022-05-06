@@ -31,6 +31,7 @@ public class Main {
         if(host.isEmpty()){
             System.out.println("Blank input detected, awaiting connection...");
             is_client = false;
+            serverSetup();
         } else {
             System.out.println("Attempting to connect to " + host + " ...");
             is_client = true;
