@@ -22,9 +22,9 @@ public class ReceiveThread extends Thread{
     }
 
     public void run(){
-        System.out.println("Receive Thread Listening");
+        //System.out.println("Receive Thread Listening");
         while (inputStream != null){
-            System.out.println("input stream looped");
+            //System.out.println("input stream looped");
             try {
                 Message message = (Message) inputStream.readObject();
                 System.out.println("Received file " + message.file_name);

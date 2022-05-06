@@ -71,7 +71,7 @@ public class Main {
 
 
     private static File fileSelector(){
-        System.out.println("file selector called");
+        //System.out.println("file selector called");
         JFileChooser fileChooser = new JFileChooser();
         int returnVal = fileChooser.showOpenDialog(null);
         if(returnVal == JFileChooser.APPROVE_OPTION){
@@ -86,7 +86,7 @@ public class Main {
     }
 
     private static File fileSaveDialogue() throws IOException {
-        System.out.println("file saver called");
+        //System.out.println("file saver called");
         JFileChooser fileChooser = new JFileChooser();
         int returnVal = fileChooser.showSaveDialog(null);
         if(returnVal == JFileChooser.APPROVE_OPTION){
