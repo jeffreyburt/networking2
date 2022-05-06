@@ -13,11 +13,11 @@ public class ReceiveThread extends Thread{
     ObjectInputStream inputStream;
 
 
-    public ReceiveThread(String host){
+    public ReceiveThread(){
         try {
-
             ServerSocket serverSocket = new ServerSocket(Main.port);
             socket = serverSocket.accept();
+            System.out.println("Server connected!!");
             ObjectInputStream inputStream = (ObjectInputStream) socket.getInputStream();
         }catch (IOException ioe){
             System.out.println(ioe);
@@ -25,10 +25,12 @@ public class ReceiveThread extends Thread{
     }
 
     public void run(){
+        System.out.println("Receive Thread Listening");
         while (inputStream != null && !socket.isClosed()){
             try {
                 TestMessage message = (TestMessage) inputStream.readObject();
-            } catch (InterruptedException | IOException | ClassNotFoundException e) {
+                System.out.println(message.message);
+            } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }

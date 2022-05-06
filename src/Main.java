@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Main {
@@ -11,17 +10,18 @@ public class Main {
 
     public static LinkedBlockingQueue<TestMessage> messagesToSend;
     private static SendThread sendThread;
+    private static ReceiveThread receiveThread;
 
     private static File selectedFile;
     private static byte[] fileByteArray;
     private static boolean is_client;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         displayEntryDialogue();
 
     }
 
-    private static void displayEntryDialogue() throws IOException {
+    private static void displayEntryDialogue() throws IOException, InterruptedException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         System.out.println("Hello, Welcome to JTP (Jeffrey Transfer Protocol");
@@ -38,7 +38,12 @@ public class Main {
         }
     }
 
-    private static void clientSetup() throws IOException {
+    private static void serverSetup(){
+        receiveThread = new ReceiveThread();
+        receiveThread.start();
+    }
+
+    private static void clientSetup() throws IOException, InterruptedException {
         messagesToSend = new LinkedBlockingQueue<>();
         sendThread = new SendThread(host, messagesToSend);
         sendThread.start();
@@ -50,6 +55,9 @@ public class Main {
 
         Message message = new Message(selectedFile.getName(), fileByteArray);
         //messagesToSend.put(message);
+
+        TestMessage testMessage = new TestMessage("please work");
+        messagesToSend.put(testMessage);
     }
 
 

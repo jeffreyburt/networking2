@@ -1,4 +1,6 @@
-public class Message {
+import java.io.Serializable;
+
+public class Message implements Serializable {
 
     public byte[] byte_array;
     public  String file_name;
