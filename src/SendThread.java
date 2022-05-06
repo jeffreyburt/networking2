@@ -10,9 +10,9 @@ public class SendThread extends Thread{
 
     private Socket socket;
     public ObjectOutputStream send_output_stream;
-    private LinkedBlockingQueue<TestMessage> messagesToSend;
+    private LinkedBlockingQueue<Message> messagesToSend;
 
-    public SendThread(String host, LinkedBlockingQueue<TestMessage> messagesToSend){
+    public SendThread(String host, LinkedBlockingQueue<Message> messagesToSend){
         try {
             this.messagesToSend = messagesToSend;
             socket = new Socket(host, Main.port);
@@ -26,8 +26,8 @@ public class SendThread extends Thread{
     public void run(){
         while (true){
             try {
-                TestMessage message = messagesToSend.take();
-                System.out.println("Sending test message with text " + message.message);
+                Message message = messagesToSend.take();
+                System.out.println("Sending file named: " + message.file_name);
                 send_output_stream.writeObject(message);
                 send_output_stream.flush();
                 send_output_stream.reset();

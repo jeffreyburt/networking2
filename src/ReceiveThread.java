@@ -1,8 +1,7 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
+
 
 public class ReceiveThread extends Thread{
 
@@ -27,9 +26,10 @@ public class ReceiveThread extends Thread{
         while (inputStream != null){
             System.out.println("input stream looped");
             try {
-                TestMessage message = (TestMessage) inputStream.readObject();
-                System.out.println(message.message);
-            } catch (IOException | ClassNotFoundException e) {
+                Message message = (Message) inputStream.readObject();
+                System.out.println("Received file " + message.file_name);
+                Main.receivedMessages.put(message);
+            } catch (IOException | ClassNotFoundException | InterruptedException e) {
                 e.printStackTrace();
             }
         }

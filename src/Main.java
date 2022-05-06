@@ -8,7 +8,8 @@ public class Main {
     public static int port = 12345;
     private static String host;
 
-    public static LinkedBlockingQueue<TestMessage> messagesToSend;
+    public static LinkedBlockingQueue<Message> messagesToSend;
+    public static LinkedBlockingQueue<Message> receivedMessages;
     private static SendThread sendThread;
     private static ReceiveThread receiveThread;
 
@@ -39,9 +40,17 @@ public class Main {
         }
     }
 
-    private static void serverSetup(){
+    private static void serverSetup() throws InterruptedException, IOException {
+        receivedMessages = new LinkedBlockingQueue<>();
+
         receiveThread = new ReceiveThread();
         receiveThread.start();
+
+        Message recievedMessage = receivedMessages.take();
+        File newFile = fileSaveDialogue();
+        try (FileOutputStream fos = new FileOutputStream(newFile)) {
+            fos.write(recievedMessage.byte_array);
+        }
     }
 
     private static void clientSetup() throws IOException, InterruptedException {
@@ -55,10 +64,8 @@ public class Main {
         fileByteArray = getFileByteArray(selectedFile);
 
         Message message = new Message(selectedFile.getName(), fileByteArray);
-        //messagesToSend.put(message);
+        messagesToSend.put(message);
 
-        TestMessage testMessage = new TestMessage("please work");
-        messagesToSend.put(testMessage);
     }
 
 
@@ -85,9 +92,7 @@ public class Main {
         if(returnVal == JFileChooser.APPROVE_OPTION){
             System.out.println(fileChooser.getSelectedFile().getName());
             fileChooser.getSelectedFile().createNewFile();
-            try (FileOutputStream fos = new FileOutputStream(fileChooser.getSelectedFile())){
-                fos.write(fileByteArray);
-            }
+            return fileChooser.getSelectedFile();
         }
         return null;
     }
